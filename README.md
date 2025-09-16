@@ -1,6 +1,6 @@
 # DzzOfficr Docker镜像
 
-当前镜像基于PHP8.1、nginx、mariadb10.7构建。
+当前镜像基于PHP8.1、nginx、mariadb构建。
 
 ## 1. 快速启动
 
