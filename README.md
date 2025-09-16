@@ -31,7 +31,7 @@ git clone https://github.com/zyx0814/dzzoffice-docker.git
 cd ./dzzoffice-docker/compose/
 docker-compose up -d
 ```
-- 默认root密码：`dzzoffice`;可以修改`docker-compose.yaml`，设置数据库root密码（MYSQL_ROOT_PASSWORD=root密码）
-- 默认数据库端口3306；站点端口8080；根据需要修改`docker-compose.yaml`中的`ports`
+- 默认root密码：`dzzoffice`;可以修改`docker-compose.yml`，设置数据库root密码（MYSQL_ROOT_PASSWORD=root密码）
+- 默认数据库端口3306；站点端口8080；根据需要修改`docker-compose.yml`中的`ports`
 - 打开`db.env`文件修改数据库名称，用户和密码
 - **注：同时部署数据库时，数据库地址可以使用数据库容器名(db)**
