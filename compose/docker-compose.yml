@@ -2,7 +2,7 @@ version: "3.5"
 
 services:
   db:
-    image: mariadb:10.7
+    image: mariadb:lts
     command: --transaction-isolation=READ-COMMITTED
     volumes:
       - "./db:/var/lib/mysql" #./db是数据库持久化目录，可以修改
