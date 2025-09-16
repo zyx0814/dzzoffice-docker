@@ -27,7 +27,7 @@ docker run -d -p 80:80 -v /data:/var/www/html xiaohu2023/dzzoffice
 ## 4. [使用docker-compose同时部署数据库（推荐）](https://github.com/zyx0814/dzzoffice-docker)
 
 ```bash
-git clone https://github.com/zyx0814/dzzoffice-docker.git kodbox
+git clone https://github.com/zyx0814/dzzoffice-docker.git
 cd ./dzzoffice-docker/compose/
 #需在db.env中设置数据库密码，还有yaml中的MYSQL_ROOT_PASSWORD
 docker-compose up -d
