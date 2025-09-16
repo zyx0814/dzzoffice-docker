@@ -29,40 +29,9 @@ docker run -d -p 80:80 -v /data:/var/www/html xiaohu2023/dzzoffice
 ```bash
 git clone https://github.com/zyx0814/dzzoffice-docker.git
 cd ./dzzoffice-docker/compose/
-#需在db.env中设置数据库密码，还有yaml中的MYSQL_ROOT_PASSWORD
 docker-compose up -d
-注:安装时数据库地址可以使用db
 ```
-
-```yaml
-version: "3.5"
-
-services:
-  db:
-    image: mariadb:10.7
-    command: --transaction-isolation=READ-COMMITTED
-    volumes:
-      - "./db:/var/lib/mysql" #./db是数据库持久化目录，可以修改
-    restart: always
-    environment:
-      - MYSQL_ROOT_PASSWORD=dzzoffice
-      - MARIADB_AUTO_UPGRADE=1
-      - MARIADB_DISABLE_UPGRADE_BACKUP=1
-    env_file:
-      - db.env
-  dzzoffice:
-    image: xiaohu2023/dzzoffice
-    ports:
-      - "8080:80" #左边8080是映射的主机端口，可以修改。右边80是容器端口
-    volumes:
-      - "./site:/var/www/html" #./site是站点目录位置,，可以修改。映射整个项目目录到容器的/var/www/html目录下
-    restart: always
-    links:
-      - db
-    environment:
-      - MYSQL_HOST=db
-    env_file:
-      - db.env
-    depends_on:
-      - db
-```
+- 默认root密码：`dzzoffice`;可以修改`docker-compose.yaml`，设置数据库root密码（MYSQL_ROOT_PASSWORD=root密码）
+- 默认数据库端口3306；站点端口8080；根据需要修改`docker-compose.yaml`中的`ports`
+- 打开`db.env`文件修改数据库名称，用户和密码
+- **注：同时部署数据库时，数据库地址可以使用数据库容器名(db)**
