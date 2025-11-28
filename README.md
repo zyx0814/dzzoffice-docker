@@ -1,8 +1,4 @@
-DzzOffice 官网：https://www.dzzoffice.com/
-
-DzzOffice 是一款开源办公套件，旨在为企业和团队提供类似于“Google 企业应用套件”和“微软 Office365”的协同办公平台。它由多款开源办公应用组成，用户可根据需求选择和安装，实现高度灵活和可定制的使用体验。
-
-当前基于 **PHP8.1、Nginx、MariaDB** 镜像，详细介绍 DzzOffice 的 Docker 部署方式（含快速启动、持久化配置、HTTPS 部署及 Docker Compose 推荐方案），并提供数据运维与数据库连接说明。
+基于 **PHP8.1、Nginx、MariaDB** 镜像，详细介绍 DzzOffice 的 Docker 部署方式（含快速启动、持久化配置、HTTPS 部署及 Docker Compose 推荐方案），并提供数据运维与数据库连接说明。
 
 ## 一、部署前提
 服务器需已安装以下环境，版本需满足要求：
@@ -46,6 +42,51 @@ docker run -d -p 80:80 xiaohu2023/dzzoffice
 ```bash
 git clone https://github.com/zyx0814/dzzoffice-docker.git
 cd ./dzzoffice-docker/compose/
+```
+> 若无法拉取，可以自行新建`db.env`文件来设置数据库环境变量并创建`docker-compose.yml`文件, 在其中配置映射端口、持久化目录等
+
+```env
+MYSQL_PASSWORD=dzzoffice
+MYSQL_DATABASE=dzzoffice
+MYSQL_USER=dzzoffice
+```
+
+```yaml
+version: '3.5'
+
+services:
+  db:
+    image: mariadb:lts
+    command: --transaction-isolation=READ-COMMITTED
+    restart: always
+    volumes:
+      - "./db:/var/lib/mysql" #./db是数据库持久化目录，可以修改
+    environment:
+      - MYSQL_ROOT_PASSWORD=dzzoffice
+      - MARIADB_AUTO_UPGRADE=1
+      - MARIADB_DISABLE_UPGRADE_BACKUP=1
+    env_file:
+      - db.env
+      
+  app:
+    image: xiaohu2023/dzzoffice
+    restart: always
+    ports:
+      - "8080:80" #左边8080是映射的主机端口，可以修改。右边80是容器端口
+    volumes:
+      - "./site:/var/www/html" #./site是站点目录位置,，可以修改。映射整个项目目录到容器的/var/www/html目录下
+    environment:
+      - MYSQL_HOST=db
+      - REDIS_HOST=redis
+    env_file:
+      - db.env
+    depends_on:
+      - db
+      - redis
+
+  redis:
+    image: redis:alpine
+    restart: always
 ```
 
 #### 步骤2：自定义配置（可选）
