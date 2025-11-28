@@ -93,3 +93,31 @@ docker-compose up -d
 | 容器内 MySQL（Docker Compose 部署） | `db`                                      | Docker 内部可通过容器名“db”解析通信    |
 | 宿主机 MySQL（服务器本地数据库）   | `host.docker.internal`                    | Docker 提供的宿主机映射地址，支持 Windows、Mac 及部分 Linux 环境 |
 | 外部 MySQL（其他服务器数据库）     | `数据库IP:端口`（如 `192.168.1.100:3306`） | 需确保数据库服务器允许当前服务器访问    |
+
+## 五、环境变量说明
+
+DzzOffice 容器支持通过环境变量自动初始化信息。
+
+**MYSQL/MariaDB**:
+
+- `MYSQL_DATABASE` 数据库名.
+- `MYSQL_USER` 数据库用户.
+- `MYSQL_PASSWORD` 数据库用户密码.
+- `MYSQL_HOST` 数据库服务地址.
+
+**redis**:
+
+- `REDIS_HOST` redis地址.
+- `REDIS_PASSWORD` redis密码.
+
+**uid/gid**:
+
+- `PUID`代表站点运行用户nginx的用户uid
+- `PGID`代表站点运行用户nginx的用户组gid
+
+**PHP参数**
+
+- `FPM_MAX` php-fpm最大进程数, 默认50
+- `FPM_START` php-fpm初始进程数, 默认10
+- `FPM_MIN_SPARE` php-fpm最小空闲进程数, 默认10
+- `FPM_MAX_SPARE` php-fpm最大空闲进程数, 默认30

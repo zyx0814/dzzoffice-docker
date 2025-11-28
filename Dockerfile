@@ -4,20 +4,26 @@ FROM php:8.1-fpm-alpine3.16
 
 # entrypoint.sh and dependencies
 RUN set -ex; \
+    addgroup -g 101 -S nginx && \
+    adduser  -S -D -H -u 101 -h /var/cache/nginx -s /sbin/nologin -G nginx nginx && \
     \
     apk update && apk upgrade &&\
     apk add --no-cache \
+        bash \
         rsync \
         supervisor \
         imagemagick \
+        ffmpeg \
+        ffmpeg-libs \
         tzdata \
         unzip \
         nginx \
-	# forward request and error logs to docker log collector
-	  && ln -sf /dev/stdout /var/log/nginx/access.log \
-	  && ln -sf /dev/stderr /var/log/nginx/error.log \
-	  && mkdir -p /run/nginx \
-	  && mkdir -p /var/log/supervisor && \
+        coreutils \
+        # forward request and error logs to docker log collector
+        && ln -sf /dev/stdout /var/log/nginx/access.log \
+        && ln -sf /dev/stderr /var/log/nginx/error.log \
+        && mkdir -p /run/nginx \
+        && mkdir -p /var/log/supervisor && \
 	cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
 	echo "Asia/Shanghai" > /etc/timezone
 
@@ -37,10 +43,11 @@ RUN mkdir -p /etc/nginx/sites-available/; \
              /docker-entrypoint-hooks.d/pre-upgrade \
              /docker-entrypoint-hooks.d/post-upgrade \
              /docker-entrypoint-hooks.d/before-starting; \
-    chown -R www-data:www-data /var/www; \
+    chown -R nginx:root /var/www; \
     chmod -R g=u /var/www
 
 ADD conf/private-ssl.conf /etc/nginx/sites-available/private-ssl.conf
+
 # install the PHP extensions we need
 RUN set -ex; \
     \
@@ -91,8 +98,8 @@ RUN set -ex; \
     pecl install imagick; \
     \
     docker-php-ext-enable \
-        redis \
         imagick \
+        redis \
     ; \
     rm -r /tmp/pear; \    
     \
@@ -127,16 +134,16 @@ RUN { \
     echo "max_input_time = 3600"  >> ${php_vars} && \
     sed -i \
         -e "s/;catch_workers_output\s*=\s*yes/catch_workers_output = yes/g" \
-        -e "s/pm.max_children = 5/pm.max_children = 50/g" \
-        -e "s/pm.start_servers = 2/pm.start_servers = 10/g" \
-        -e "s/pm.min_spare_servers = 1/pm.min_spare_servers = 10/g" \
-        -e "s/pm.max_spare_servers = 3/pm.max_spare_servers = 30/g" \
+        -e "s/pm.max_children = */pm.max_children = 50/g" \
+        -e "s/pm.start_servers = */pm.start_servers = 10/g" \
+        -e "s/pm.min_spare_servers = */pm.min_spare_servers = 10/g" \
+        -e "s/pm.max_spare_servers = */pm.max_spare_servers = 30/g" \
         -e "s/;pm.max_requests = 500/pm.max_requests = 500/g" \
-        -e "s/user = www-data/user = www-data/g" \
-        -e "s/group = www-data/group = www-data/g" \
+        -e "s/user = www-data/user = nginx/g" \
+        -e "s/group = www-data/group = nginx/g" \
         -e "s/;listen.mode = 0660/listen.mode = 0666/g" \
-        -e "s/;listen.owner = www-data/listen.owner = www-data/g" \
-        -e "s/;listen.group = www-data/listen.group = www-data/g" \
+        -e "s/;listen.owner = www-data/listen.owner = nginx/g" \
+        -e "s/;listen.group = www-data/listen.group = nginx/g" \
         -e "s/listen = 127.0.0.1:9000/listen = \/var\/run\/php-fpm.sock/g" \
         -e "s/^;clear_env = no$/clear_env = no/" \
         ${fpm_conf}
