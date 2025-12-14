@@ -22,8 +22,9 @@ docker save -o dzzoffice.tar xiaohu2023/dzzoffice
 docker save -o redis.tar redis:alpine
 docker save -o mariadb.tar mariadb:lts
 ```
-2. 现成离线包（amd64 架构）：https://pan.baidu.com/s/110mmXIOMv-Gt_Vcja0nJbw?pwd=xiao
-3. 传输 tar 包到离线服务器并进入 tar 包所在目录，执行导入：
+> 现成离线包（amd64 架构）：https://pan.baidu.com/s/110mmXIOMv-Gt_Vcja0nJbw?pwd=xiao
+
+2. 传输 tar 包到离线服务器并进入 tar 包所在目录，执行导入：
 ```bash
 docker load -i dzzoffice.tar
 docker load -i redis.tar
