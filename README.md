@@ -1,49 +1,57 @@
-# DzzOffice Docker镜像
-
-[![buildx](https://github.com/zyx0814/dzzoffice-docker/actions/workflows/image.yml/badge.svg)](https://github.com/zyx0814/dzzoffice-docker/actions/workflows/image.yml)
+基于 **PHP8.1、Nginx、MariaDB** 镜像，详细介绍 DzzOffice 的 Docker 部署方式（含快速启动、持久化配置、HTTPS 部署及 Docker Compose 推荐方案），并提供数据运维与数据库连接说明。
 
 ### 版本与升级说明
-- 该镜像仅用于部署，无固定版本标签（始终为最新部署包），应用更新与镜像无关；
-- 数据持久化的用户升级DzzOffice：
-  - ✅ 在线升级：通过DzzOffice后台「系统工具」完成；
-  - ✅ 离线升级：下载最新源码覆盖容器内/宿主机挂载的应用目录即可。
+- DzzOffice Docker镜像仅用于部署，无固定版本标签（始终为最新部署包），应用更新与镜像无关；
+- 数据持久化的用户升级DzzOffice：后台「系统工具」在线升级，或下载源码覆盖挂载目录离线升级。
 
 ## 一、部署前提
-服务器需已安装以下环境，版本需满足要求：
-- Docker：20.10 及以上
-- Docker Compose：v2 及以上
+- 服务器需安装 Docker 20.10+、Docker Compose v2+；
+- 在线环境（默认）：直接部署，自动拉取镜像；
+- 离线环境：需先导入镜像（见下文），再执行部署。
 
-## 二、部署方式（4种可选）
-### 方式1：快速启动（适用于测试，无数据持久化）
-直接拉取镜像并启动容器，默认使用 80 端口，**容器删除后数据会丢失**，仅推荐临时测试使用。
+## 二、离线环境镜像导入（仅离线服务器需做）
+1. 联网设备拉取并导出镜像：
+```bash
+# 拉取核心镜像
+docker pull xiaohu2023/dzzoffice
+docker pull redis:alpine
+docker pull mariadb:lts
+
+# 导出镜像为 tar 包（便于离线传输）
+docker save -o dzzoffice.tar xiaohu2023/dzzoffice
+docker save -o redis.tar redis:alpine
+docker save -o mariadb.tar mariadb:lts
+```
+2. 现成离线包（amd64 架构）：https://pan.baidu.com/s/110mmXIOMv-Gt_Vcja0nJbw?pwd=xiao
+3. 传输 tar 包到离线服务器并进入 tar 包所在目录，执行导入：
+```bash
+docker load -i dzzoffice.tar
+docker load -i redis.tar
+docker load -i mariadb.tar
+```
+导入完成后，执行 `docker images` 命令验证，若能看到 `xiaohu2023/dzzoffice`、`redis:alpine`、`mariadb:lts` 3 个镜像，则导入成功。
+
+## 二、部署方式
+### 方式1：快速启动
+默认使用 80 端口，**容器删除后数据会丢失**，仅推荐临时测试使用。
 ```bash
 docker run -d -p 80:80 xiaohu2023/dzzoffice
 ```
-启动后通过 `http://服务器IP` 访问。
 
-### 方式2：基础数据持久化（挂载宿主机目录）
-通过挂载宿主机目录 `/data` 到容器内 `/var/www/html`，实现应用数据持久化（容器删除后数据保留在宿主机 `/data` 中）。
-1. 先在宿主机创建数据目录：
-   ```bash
-   mkdir /data
-   ```
-2. 启动容器并挂载目录：
-   ```bash
-   docker run -d -p 80:80 -v /data:/var/www/html xiaohu2023/dzzoffice
-   ```
-启动后通过 `http://服务器IP` 访问，数据会自动存储到宿主机 `/data` 目录。
+### 方式2：实现数据持久化
+创建数据目录并在启动时挂载
+```bash
+mkdir /data
+ocker run -d -p 80:80 -v /data:/var/www/html xiaohu2023/dzzoffice
+```
 
+### 方式3：以HTTPS方式启动
+若需通过 HTTPS 访问，需提前准备 SSL 证书（格式必须为 `fullchain.pem` 、 `privkey.pem`）
+```bash
+docker run -d -p 443:443 -v "你的证书目录":/etc/nginx/ssl --name dzzoffice xiaohu2023/dzzoffice
+```
 
-### 方式3：HTTPS 方式启动（使用已有 SSL 证书）
-若需通过 HTTPS 访问，需提前准备 SSL 证书（格式必须为 `fullchain.pem` 和 `privkey.pem`），并通过挂载证书目录到容器实现配置。
-1. 替换命令中的 **“你的证书目录”** 为宿主机存放证书的实际路径（如 `/home/ssl`）；
-2. 执行启动命令（默认使用 443 端口，可按需修改）：
-   ```bash
-   docker run -d -p 443:443 -v "你的证书目录":/etc/nginx/ssl --name dzzoffice xiaohu2023/dzzoffice
-   ```
-启动后通过 `https://服务器IP` 或 `https://你的域名` 访问。
-
-### 方式4：Docker Compose 部署（推荐，含独立数据库）
+### 方式4：Docker Compose 部署（推荐）
 通过 Docker Compose 同时部署 DzzOffice 应用和 MariaDB 数据库，实现应用、数据库数据双重持久化，且配置更灵活，推荐生产环境使用。
 
 #### 步骤1：拉取部署脚本
@@ -132,7 +140,6 @@ docker-compose up -d
 ### 3. 注意事项
 - 不要手动修改 ./db 下的文件，应通过 SQL 命令操作数据库；
 - 建议定期备份宿主机上的 `./db`、`./site` 目录，避免数据丢失。
-
 
 ## 四、数据库地址填写规则（初始化配置用）
 初始化 DzzOffice 时，需根据数据库部署位置填写正确的“数据库地址”，规则如下：
