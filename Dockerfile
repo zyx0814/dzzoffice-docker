@@ -150,6 +150,15 @@ RUN { \
 
 VOLUME /var/www/html
 
+RUN set -ex; \
+    echo "Downloading DzzOffice source code during build..."; \
+    mkdir -p /usr/src; \
+    curl -fsSL -o /usr/src/dzzoffice.zip "https://codeload.github.com/zyx0814/dzzoffice/zip/refs/heads/master"; \
+    unzip /usr/src/dzzoffice.zip -d /usr/src; \
+    mv /usr/src/dzzoffice-master /usr/src/dzzoffice; \
+    rm /usr/src/dzzoffice.zip; \
+    echo "DzzOffice source code downloaded and extracted successfully!"
+
 EXPOSE 80 443
 
 COPY entrypoint.sh /entrypoint.sh
