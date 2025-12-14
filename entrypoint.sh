@@ -41,31 +41,30 @@ if [ -n "${FPM_MAX+x}" ] && [ -n "${FPM_START+x}" ] && [ -n "${FPM_MIN_SPARE+x}"
 fi
 
 if  directory_empty "/var/www/html"; then
-        echo "Installing DzzOffice from GitHub master..."
-        if [ "$(id -u)" = 0 ]; then
-            rsync_options="-rlDog --chown nginx:nginx"
-        else
-            rsync_options="-rlD"
-        fi
-        echo "DzzOffice is downloading ..."
-        apk add --no-cache --virtual .fetch-deps gnupg
-        curl -fsSL -o dzzoffice.zip "https://codeload.github.com/zyx0814/dzzoffice/zip/refs/heads/master"
-        export GNUPGHOME="$(mktemp -d)"
-        unzip dzzoffice.zip -d /usr/src/
-        gpgconf --kill all
-        rm dzzoffice.zip
-        rm -rf "$GNUPGHOME"
-        apk del .fetch-deps
-        echo "DzzOffice is installing ..."
-        rsync $rsync_options --delete /usr/src/dzzoffice-master/ /var/www/html/
+    echo "Installing DzzOffice from pre-downloaded source..."
+    if [ "$(id -u)" = 0 ]; then
+        rsync_options="-rlDog --chown nginx:nginx"
+    else
+        rsync_options="-rlD"
+    fi
+
+    if rsync $rsync_options --delete /usr/src/dzzoffice/ /var/www/html/; then
+        echo "DzzOffice installed successfully!"
+    else
+        echo "Error: Failed to sync DzzOffice source code!" >&2
+        exit 1
+    fi
 else
-        echo "DzzOffice has been configured!"
-        fix_permissions
+    echo "DzzOffice has been configured!"
 fi
+
+fix_permissions
+
 if [ -f /etc/nginx/ssl/fullchain.pem ] && [ -f /etc/nginx/ssl/privkey.pem ] && [ ! -f /etc/nginx/sites-enabled/*-ssl.conf ] ; then
-        echo "SSL is enabled!"
-        ln -s /etc/nginx/sites-available/private-ssl.conf /etc/nginx/sites-enabled/
-        sed -i "s/#return 301/return 301/g" /etc/nginx/sites-available/default.conf
+    echo "SSL is enabled!"
+    ln -s /etc/nginx/sites-available/private-ssl.conf /etc/nginx/sites-enabled/
+    sed -i "s/#return 301/return 301/g" /etc/nginx/nginx.conf
 fi
+
 echo "Starting DzzOffice services..."
 exec "$@"
