@@ -1,5 +1,7 @@
 # DzzOffice Docker镜像
 
+[![buildx](https://github.com/zyx0814/dzzoffice-docker/actions/workflows/image.yml/badge.svg)](https://github.com/zyx0814/dzzoffice-docker/actions/workflows/image.yml)
+
 ### 版本与升级说明
 - 该镜像仅用于部署，无固定版本标签（始终为最新部署包），应用更新与镜像无关；
 - 数据持久化的用户升级DzzOffice：
