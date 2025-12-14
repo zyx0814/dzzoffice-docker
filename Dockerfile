@@ -38,11 +38,6 @@ RUN mkdir -p /etc/nginx/sites-available/; \
     mkdir -p /etc/nginx/sites-enabled/; \
     mkdir -p /etc/nginx/ssl/; \
     mkdir /var/www/html/; \
-    mkdir -p /docker-entrypoint-hooks.d/pre-installation \
-             /docker-entrypoint-hooks.d/post-installation \
-             /docker-entrypoint-hooks.d/pre-upgrade \
-             /docker-entrypoint-hooks.d/post-upgrade \
-             /docker-entrypoint-hooks.d/before-starting; \
     chown -R nginx:root /var/www; \
     chmod -R g=u /var/www
 
