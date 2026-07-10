@@ -43,7 +43,7 @@ docker run -d -p 80:80 xiaohu2023/dzzoffice
 创建数据目录并在启动时挂载
 ```bash
 mkdir /data
-ocker run -d -p 80:80 -v /data:/var/www/html xiaohu2023/dzzoffice
+docker run -d -p 80:80 -v /data:/var/www/html xiaohu2023/dzzoffice
 ```
 
 ### 方式3：以HTTPS方式启动
