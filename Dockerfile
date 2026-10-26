@@ -67,7 +67,7 @@ RUN set -ex; \
         tidyhtml-dev \
     ; \
     \
-    docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp; \
+    docker-php-ext-configure gd; \
     docker-php-ext-configure intl; \
     docker-php-ext-configure ldap; \
     docker-php-ext-install -j "$(nproc)" \
