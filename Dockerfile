@@ -1,4 +1,5 @@
-FROM php:8.1-fpm-alpine3.16
+# 锁定 8.3.36：修复 CVE-2026-109618 / CVE-2026-109619（php2shell，CVSS 9.2 严重 RCE）
+FROM php:8.3.36-fpm-alpine
 
 # RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
@@ -61,7 +62,6 @@ RUN set -ex; \
         libwebp-dev \
         bzip2-dev \
         gettext-dev \
-        libressl-dev \
         curl-dev \
         imagemagick-dev \
         tidyhtml-dev \

@@ -1,4 +1,4 @@
-基于 **PHP8.1、Nginx、MariaDB** 镜像，详细介绍 DzzOffice 的 Docker 部署方式（含快速启动、持久化配置、HTTPS 部署及 Docker Compose 推荐方案），并提供数据运维与数据库连接说明。
+基于 **PHP8.3、Nginx、MariaDB** 镜像，详细介绍 DzzOffice 的 Docker 部署方式（含快速启动、持久化配置、HTTPS 部署及 Docker Compose 推荐方案），并提供数据运维与数据库连接说明。
 
 ### 版本与升级说明
 - DzzOffice Docker镜像仅用于部署，无固定版本标签（始终为最新部署包），应用更新与镜像无关；
