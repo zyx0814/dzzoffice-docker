@@ -45,4 +45,4 @@ jobs:
             linux/arm64/v8
             linux/ppc64le
             linux/s390x
-          tags: ${{ env.IMAGE_NAME }}:latest
+          tags: ${{ env.IMAGE_NAME }}:2.4.2
