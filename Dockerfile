@@ -65,9 +65,11 @@ RUN set -ex; \
         curl-dev \
         imagemagick-dev \
         tidyhtml-dev \
+        # sockets 扩展编译需要 linux/sock_diag.h（ppc64le 等架构上不再被间接拉入）
+        linux-headers \
     ; \
     \
-    docker-php-ext-configure gd; \
+    docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp; \
     docker-php-ext-configure intl; \
     docker-php-ext-configure ldap; \
     docker-php-ext-install -j "$(nproc)" \
