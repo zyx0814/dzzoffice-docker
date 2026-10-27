@@ -37,6 +37,7 @@ jobs:
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
+          pull: true # 强制拉取基础镜像，解决FROM缓存旧版本问题
           platforms: |
             linux/amd64
             linux/arm64/v8
