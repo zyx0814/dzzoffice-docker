@@ -141,7 +141,7 @@ RUN { \
         -e "s/;listen.mode = 0660/listen.mode = 0666/g" \
         -e "s/;listen.owner = www-data/listen.owner = nginx/g" \
         -e "s/;listen.group = www-data/listen.group = nginx/g" \
-        -e "s/listen = 127.0.0.1:9000/listen = \/var\/run\/php-fpm.sock/g" \
+        -e "s/;listen = 127.0.0.1:9000/listen = \/var\/run\/php-fpm.sock/g" \
         -e "s/^;clear_env = no$/clear_env = no/" \
         ${fpm_conf}
 
